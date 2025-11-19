@@ -1,42 +1,169 @@
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: #1a1a2e; /* Darker background */
+  color: #e0e0e0; /* Lighter text color */
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
 #root {
-  max-width: 1280px;
+  width: 100%;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 20px;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 15px 30px;
+  background-color: #16213e; /* Dark blue header */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.header h1 {
+  margin: 0;
+  font-size: 2.2em;
+  color: #0f3460; /* Accent color for title */
+  font-weight: 700;
 }
 
-.card {
-  padding: 2em;
+.account-zone-button {
+  background-color: #e94560; /* Red accent button */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
 }
 
-.read-the-docs {
-  color: #888;
+.account-zone-button:hover {
+  background-color: #b8334a;
+}
+
+.summary-cards-container {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  padding: 20px 0;
+  gap: 20px;
+}
+
+.summary-card {
+  background-color: #0f3460; /* Dark blue card background */
+  border-radius: 10px;
+  padding: 20px;
+  flex: 1;
+  min-width: 180px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-5px);
+}
+
+.summary-card h3 {
+  margin-top: 0;
+  color: #e0e0e0;
+  font-size: 1.2em;
+}
+
+.summary-card p {
+  font-size: 2em;
+  font-weight: 700;
+  color: #e94560; /* Red accent for numbers */
+  margin: 0;
+}
+
+.dashboard-selector {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.dashboard-selector button {
+  background-color: #16213e; /* Dark blue button */
+  color: #e0e0e0;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 600;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dashboard-selector button:hover {
+  background-color: #0f3460; /* Lighter blue on hover */
+  color: #e94560; /* Red accent on hover */
+}
+
+.dashboard-selector button.active {
+  background-color: #e94560; /* Active button red */
+  color: white;
+}
+
+.dashboard-container {
+  background-color: #16213e; /* Dark blue container */
+  padding: 30px;
+  border-radius: 10px;
+  width: 100%;
+  text-align: left;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-container h2 {
+  margin-top: 0;
+  color: #e0e0e0;
+  font-size: 1.8em;
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  border: 1px solid #0f3460; /* Darker border for table */
+  padding: 12px 15px;
+  text-align: left;
+}
+
+th {
+  background-color: #0f3460; /* Dark blue header for table */
+  color: #e0e0e0;
+  font-weight: 600;
+}
+
+tr:nth-child(even) {
+  background-color: #1a2a4a; /* Slightly lighter row for zebra striping */
+}
+
+tr:hover {
+  background-color: #233a66; /* Highlight row on hover */
 }
