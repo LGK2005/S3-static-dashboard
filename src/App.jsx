@@ -2,10 +2,8 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import { useState, useEffect } from 'react'
 
-// --- CONFIGURATION REQUIRED ---
-// ⚠️ STEP 1: Copy your CloudFront Domain (e.g., https://d12345.cloudfront.net)
-// ⚠️ STEP 2: Paste it inside the quotes below to replace the placeholder.
-const API_BASE_URL = 'https://dk8d92wzanrwm.cloudfront.net/'; 
+// --- CONFIGURATION ---
+const API_BASE_URL = 'https://dk8d92wzanrwm.cloudfront.net'; 
 
 // --- STYLES (Embedded for Single-File Portability) ---
 const styles = `
@@ -244,9 +242,6 @@ function App() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  
-  // Check if user has configured the URL
-  //const isConfigured = !API_BASE_URL.includes('https://dk8d92wzanrwm.cloudfront.net/');
 
   const endpoints = {
     guardduty: '/logs/guardduty?limit=10',
@@ -255,8 +250,6 @@ function App() {
   };
 
   const fetchData = async (tab) => {
-    if (!isConfigured) return;
-
     setLoading(true);
     setError(null);
     setData([]);
@@ -307,33 +300,8 @@ function App() {
   };
 
   useEffect(() => {
-    if (isConfigured) {
-      fetchData(activeTab);
-    }
-  }, [activeTab, isConfigured]);
-
-  if (!isConfigured) {
-    return (
-      <div className="dashboard-container">
-        <style>{styles}</style>
-        <header className="dashboard-header">
-          <h1>🛡️ Incident Response Dashboard</h1>
-          <div className="status-indicator">Setup Required</div>
-        </header>
-        <div className="config-warning">
-          <h2>⚠️ Configuration Required</h2>
-          <p>You need to connect this frontend to your CloudFront API.</p>
-          <hr style={{margin: '1.5rem 0', border: 'none', borderTop: '1px solid #fed7aa'}}/>
-          <ol style={{textAlign: 'left', display: 'inline-block'}}>
-            <li>Open the code editor on the right side.</li>
-            <li>Find line 5: <code>const API_BASE_URL = ...</code></li>
-            <li>Replace the placeholder URL with your actual CloudFront Domain.</li>
-            <li>Example: <code>https://d12345abc.cloudfront.net</code></li>
-          </ol>
-        </div>
-      </div>
-    );
-  }
+    fetchData(activeTab);
+  }, [activeTab]);
 
   return (
     <div className="dashboard-container">
