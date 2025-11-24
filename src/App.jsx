@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 // --- CONFIGURATION REQUIRED ---
 // ⚠️ STEP 1: Copy your CloudFront Domain (e.g., https://d12345.cloudfront.net)
 // ⚠️ STEP 2: Paste it inside the quotes below to replace the placeholder.
-const API_BASE_URL = 'https://YOUR_CLOUDFRONT_ID.cloudfront.net'; 
+const API_BASE_URL = 'https://dk8d92wzanrwm.cloudfront.net/'; 
 
 // --- STYLES (Embedded for Single-File Portability) ---
 const styles = `
@@ -246,7 +246,7 @@ function App() {
   const [error, setError] = useState(null);
   
   // Check if user has configured the URL
-  const isConfigured = !API_BASE_URL.includes('YOUR_CLOUDFRONT_ID');
+  const isConfigured = !API_BASE_URL.includes('dk8d92wzanrwm');
 
   const endpoints = {
     guardduty: '/findings/guardduty?limit=10',
