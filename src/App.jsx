@@ -246,10 +246,10 @@ function App() {
   const [error, setError] = useState(null);
   
   // Check if user has configured the URL
-  const isConfigured = !API_BASE_URL.includes('dk8d92wzanrwm');
+  //const isConfigured = !API_BASE_URL.includes('https://dk8d92wzanrwm.cloudfront.net/');
 
   const endpoints = {
-    guardduty: '/findings/guardduty?limit=10',
+    guardduty: '/logs/guardduty?limit=10',
     cloudtrail: '/logs/cloudtrail?limit=10',
     vpc: '/logs/vpc?limit=10'
   };
