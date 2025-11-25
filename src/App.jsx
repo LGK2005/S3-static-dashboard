@@ -13,9 +13,9 @@ function App() {
   const [error, setError] = useState(null);
 
   const endpoints = {
-    guardduty: '/logs/guardduty?limit=10',
-    cloudtrail: '/logs/cloudtrail?limit=10',
-    vpc: '/logs/vpc?limit=10'
+    guardduty: '/logs/guardduty?limit=50',
+    cloudtrail: '/logs/cloudtrail?limit=50',
+    vpc: '/logs/vpc?limit=50'
   };
 
   const fetchData = async (tab) => {
