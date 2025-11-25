@@ -3,7 +3,7 @@ import viteLogo from '/vite.svg'
 import { useState, useEffect } from 'react'
 
 // --- CONFIGURATION ---
-const API_BASE_URL = 'https://dk8d92wzanrwm.cloudfront.net'; 
+const API_BASE_URL = 'https://staticdashboard.website/'; 
 
 // --- STYLES (Embedded for Single-File Portability) ---
 const styles = `
@@ -275,7 +275,7 @@ function App() {
       console.error("Fetch error:", err);
       // Friendly error message for common issues
       if (err.message.includes('Failed to fetch')) {
-        setError("Network Error: Could not connect to API. This is usually due to CORS issues (CloudFront/API Gateway configuration) or an incorrect API URL.");
+        setError("Network Error: Could not connect to API. This is usually due to CORS issues (CloudFront/API Gateway configuration) or an incorrect API URL.\n" + err.message);
       } else {
         setError(err.message);
       }
