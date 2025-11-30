@@ -17,7 +17,6 @@
 }
 
 html, body, #root {
-  height: 100%;
   width: 100%;
 }
 
@@ -379,7 +378,7 @@ tr:hover td {
 .detail-row { display: flex; border-bottom: 1px solid #f1f5f9; padding: 0.6rem 0; }
 .detail-label { width: 30%; font-weight: 600; color: var(--text-light); font-size: 0.85rem; }
 .detail-value { width: 70%; font-family: 'Monaco', monospace; font-size: 0.8rem; word-break: break-all; }
-.close-btn { background: #f1f5f9; border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; }
+.close-btn { background: #ff3e3e; border: none; width: 28px; height: 28px; cursor: pointer; display: flex; justify-content: center; align-items: center;}
 
 /* --- EXISTING CSS UPDATES --- */
 

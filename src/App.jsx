@@ -176,17 +176,25 @@ function App() {
 
   // --- NEW: SUMMARY METRICS CALCULATION ---
   const getSummaryMetrics = () => {
+    // 1. Get "Today's Date" string (YYYY-MM-DD) in local time
+    const now = new Date();
+    const todayStr = now.getFullYear() + '-' + 
+                      String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                      String(now.getDate()).padStart(2, '0');
+    
     if (activeTab === 'guardduty') {
+        const todaysFindings = data.filter(i => (i.created_at || '').startsWith(todayStr)).length;
         const highSev = data.filter(i => parseFloat(i.severity) > 7).length;
         return [
-            { label: "Total Findings", value: data.length, sub: "Last 24 hours" },
+            { label: "Total Findings", value: todaysFindings, sub: todayStr },
             { label: "Critical / High", value: highSev, sub: "Requires Action" },
             { label: "Regions Affected", value: new Set(data.map(i => i.region)).size || 1, sub: "Active Regions" }
         ];
     }
     if (activeTab === 'cloudtrail') {
+        const todaysEvents = data.filter(i => (i.eventtime || '').startsWith(todayStr)).length;
         return [
-            { label: "Total Events", value: data.length, sub: "Captured Logs" },
+            { label: "Total Events", value: todaysEvents, sub: "Captured Logs" },
             { label: "Unique Users", value: new Set(data.map(i => i.username)).size, sub: "Active Identities" },
             { label: "Errors", value: data.filter(i => i.errorcode).length, sub: "Failed API Calls" }
         ];
@@ -361,7 +369,7 @@ function App() {
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2>Incident Details</h2>
-              <button className="close-btn" onClick={() => setIsModalOpen(false)}><Icons.X size={20}/></button>
+              <button className="close-btn" onClick={() => setIsModalOpen(false)}>X</button>
             </div>
             <div className="modal-body">
                 {detailLoading ? <p>Loading...</p> : selectedItem ? (
