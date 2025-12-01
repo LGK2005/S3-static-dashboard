@@ -66,6 +66,13 @@ function App() {
     vpc: []
   });
 
+  // Define which columns appear in the main table list for cleaner UI
+  const TABLE_COLUMNS = {
+    guardduty: ['finding_type', 'severity', 'region', 'account_id', 'created_at', 'date'],
+    cloudtrail: ['eventtime', 'eventname', 'usertype', 'username', 'awsregion', 'sourceipaddress'],
+    vpc: ['account_id', 'vpc_id', 'region', 'query_name', 'srcids_instance', 'timestamp'] // Adjust based on your VPC logs
+  };
+
   // Modal state
   const [selectedItem, setSelectedItem] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
@@ -163,6 +170,12 @@ function App() {
     } finally {
       setDetailLoading(false);
     }
+  };
+
+  // Updated: Just set the data directly. No API call needed.
+  const handleRowClick = (row) => {
+    setSelectedItem(row); 
+    setIsModalOpen(true);
   };
 
   const parseAthenaResult = (resultSet) => {
@@ -365,20 +378,36 @@ function App() {
                 */}
                 <div className="table-wrapper">
                     <table>
-                        <thead>
-                            <tr>
-                            {Object.keys(data[0]).map((key) => (
-                                <th key={key}>{key.replace(/_/g, ' ')}</th>
-                            ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {currentItems.map((row, i) => (
-                            <tr key={i} onClick={() => fetchDetail(row)} /* 2. Row is now clickable */>
-                                {Object.values(row).map((val, j) => (<td key={j}>{val}</td>))}
-                            </tr>
-                            ))}
-                        </tbody>
+                      <thead>
+                          <tr>
+                          {/* Dynamic Headers based on Configuration */}
+                          {data.length > 0 && TABLE_COLUMNS[activeTab] ? 
+                              TABLE_COLUMNS[activeTab].map((key) => (
+                                  <th key={key}>{key.replace(/_/g, ' ')}</th>
+                              )) : 
+                              // Fallback if config missing: Show first 5 keys
+                              Object.keys(data[0] || {}).slice(0, 5).map(key => <th key={key}>{key}</th>)
+                          }
+                          </tr>
+                      </thead>
+                      <tbody>
+                          {currentItems.map((row, i) => (
+                          <tr 
+                              key={i} 
+                              onClick={() => handleRowClick(row)} 
+                              className="clickable-row"
+                          >
+                              {/* Only render the columns defined in TABLE_COLUMNS */}
+                              {TABLE_COLUMNS[activeTab] ? 
+                                  TABLE_COLUMNS[activeTab].map((colKey, j) => (
+                                      <td key={j}>{row[colKey] || '-'}</td>
+                                  )) :
+                                  // Fallback
+                                  Object.values(row).slice(0, 5).map((val, j) => <td key={j}>{val}</td>)
+                              }
+                          </tr>
+                          ))}
+                      </tbody>
                     </table>
                 </div>
 
