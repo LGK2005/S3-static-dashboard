@@ -63,14 +63,16 @@ function App() {
   const [stats, setStats] = useState({
     guardduty: { high: 0, medium: 0, low: 0 }, // Changed structure
     cloudtrail: [],
-    vpc: []
+    vpc: [],
+    eni: []
   });
 
   // Define which columns appear in the main table list for cleaner UI
   const TABLE_COLUMNS = {
     guardduty: ['finding_type', 'severity', 'region', 'account_id', 'created_at', 'date'],
     cloudtrail: ['eventtime', 'eventname', 'usertype', 'username', 'awsregion', 'sourceipaddress'],
-    vpc: ['account_id', 'vpc_id', 'region', 'query_name', 'srcids_instance', 'timestamp'] // Adjust based on your VPC logs
+    vpc: ['account_id', 'vpc_id', 'region', 'query_name', 'srcids_instance', 'timestamp'],
+    eni: ['account_id', 'interface_id', 'srcaddr', 'dstaddr', 'srcport', 'dstport', 'protocol', 'action']
   };
 
   // Modal state
@@ -81,7 +83,8 @@ function App() {
   const endpoints = {
     guardduty: '/logs/guardduty?limit=50',
     cloudtrail: '/logs/cloudtrail?limit=50',
-    vpc: '/logs/vpc?limit=50'
+    vpc: '/logs/vpc?limit=50',
+    eni: '/logs/eni_logs?limit=50'
   };
 
   useEffect(() => { fetchOverallStats(); }, []);
@@ -105,16 +108,18 @@ function App() {
 
   const fetchOverallStats = async () => {
     try {
-        const [gdData, ctData, vpcData] = await Promise.all([
+        const [gdData, ctData, vpcData, eniData] = await Promise.all([
         fetchAndParse(`${API_BASE_URL}${endpoints.guardduty}`),
         fetchAndParse(`${API_BASE_URL}${endpoints.cloudtrail}`),
-        fetchAndParse(`${API_BASE_URL}${endpoints.vpc}`)
+        fetchAndParse(`${API_BASE_URL}${endpoints.vpc}`),
+        fetchAndParse(`${API_BASE_URL}${endpoints.eni}`)
         ]);
 
         setStats({
         guardduty: processSeverity(gdData),
         cloudtrail: processDistribution(ctData, 'eventname'),
-        vpc: processDistribution(vpcData, 'action')
+        vpc: processDistribution(vpcData, 'action'),
+        eni: processDistribution(eniData, 'action')
         });
     } catch (e) {
         console.warn("Could not load stats", e);
@@ -150,26 +155,6 @@ function App() {
       .map(([label, count]) => ({ label, count }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
-  };
-
-  const fetchDetail = async (row) => {
-    setSelectedItem(null); 
-    setIsModalOpen(true);
-    setDetailLoading(true);
-
-    try {
-      if (activeTab === 'guardduty' && row.finding_id) {
-        const url = `${API_BASE_URL}/findings/guardduty?finding_id=${row.finding_id}`;
-        const items = await fetchAndParse(url);
-        setSelectedItem(items.length > 0 ? items[0] : row); 
-      } else {
-        setSelectedItem(row);
-      }
-    } catch (err) {
-      setSelectedItem({ error: "Failed to load details" });
-    } finally {
-      setDetailLoading(false);
-    }
   };
 
   // Updated: Just set the data directly. No API call needed.
@@ -278,10 +263,25 @@ function App() {
     }
 
     // 2. Existing Bar Chart for CloudTrail / VPC
-    let chartData = activeTab === 'cloudtrail' ? stats.cloudtrail : stats.vpc;
-    let title = activeTab === 'cloudtrail' ? "Top User Activities" : "Traffic Action Distribution";
-    let colorClass = activeTab === 'cloudtrail' ? "ct" : "vpc";
-    let Icon = activeTab === 'cloudtrail' ? Icons.Activity : Icons.Network;
+    // Determine data source based on tab
+    let chartData, title, colorClass, Icon;
+
+    if (activeTab === 'cloudtrail') {
+        chartData = stats.cloudtrail;
+        title = "Top User Activities";
+        colorClass = "ct";
+        Icon = Icons.Activity;
+    } else if (activeTab === 'vpc') {
+        chartData = stats.vpc;
+        title = "VPC Traffic Actions";
+        colorClass = "vpc";
+        Icon = Icons.Network;
+    } else { // ENI Tab
+        chartData = stats.eni || []; // Fallback to empty array if undefined
+        title = "ENI Traffic Actions";
+        colorClass = "vpc"; // Reuse VPC blue style
+        Icon = Icons.Network;
+    }
 
     return (
         <div className={`stat-card ${colorClass}`} style={{height: '100%', borderLeftWidth: '4px', boxSizing:'border-box'}}>
@@ -331,6 +331,9 @@ function App() {
           <button className={`tab-btn ${activeTab === 'vpc' ? 'active' : ''}`} onClick={() => setActiveTab('vpc')}>
             <Icons.Network size={18}/> VPC Network
           </button>
+          <button className={`tab-btn ${activeTab === 'eni' ? 'active' : ''}`} onClick={() => setActiveTab('eni')}>
+            <Icons.Network size={18}/> ENI Flow Logs
+          </button>
         </div>
         <button className="refresh-btn" onClick={() => fetchListData(activeTab)}>
           <Icons.RefreshCw size={18} /> Refresh
@@ -365,7 +368,8 @@ function App() {
         <div className="list-section">
             <div className="section-title" style={{marginTop: '0'}}>
                 {activeTab === 'guardduty' ? 'Findings List' : 
-                 activeTab === 'cloudtrail' ? 'Audit Logs' : 'Flow Logs'}
+                 activeTab === 'cloudtrail' ? 'Audit Logs' : 
+                 activeTab === 'vpc' ? 'VPC Flow Logs' : 'ENI Flow Logs'}
             </div>
 
             {error && <div className="error-message"><p>{error}</p></div>}
