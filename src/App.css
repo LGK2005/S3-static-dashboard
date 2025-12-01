@@ -92,7 +92,7 @@ body {
 
 .tabs {
   display: flex;
-  background: #f1f5f9;
+  background: #162c42;
   padding: 4px;
   border-radius: 8px;
   gap: 4px;
@@ -106,7 +106,7 @@ body {
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--text-light);
+  color: white;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
@@ -118,7 +118,7 @@ body {
 
 .tab-btn:hover {
   color: var(--primary);
-  background: rgba(255,255,255,0.6);
+  background: rgb(255, 255, 255);
 }
 
 .tab-btn.active {
@@ -462,6 +462,88 @@ tbody tr {
 tbody tr:hover {
   background-color: #f1f5f9; /* Highlight color on hover */
 }
+
+/* SEVERITY CHART STYLES (New) */
+.severity-container {
+    display: flex;
+    justify-content: space-around;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.severity-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    color: white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+    position: relative;
+    padding-bottom: 24px; /* Space for label below */
+    overflow: visible; /* Allow label to sit outside */
+}
+
+.severity-box:hover {
+    transform: translateY(-2px);
+}
+
+.severity-box.high { background: #ff0000; }
+.severity-box.medium { background: #ffa500; }
+.severity-box.low { background: #00ff00; }
+
+.sev-count {
+    font-size: 2.2rem;
+    font-weight: 500;
+    line-height: 1;
+}
+
+.sev-label {
+    position: absolute;
+    bottom: -28px;
+    color: #333;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* Legend Styles */
+.severity-legend {
+    margin-top: 2.5rem;
+    padding-top: 1rem;
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+.legend-title {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.legend-items {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.dot-high { background: #ff0000; }
+.dot-med { background: #ffa500; }
+.dot-low { background: #00ff00; }
 
 /* Responsive */
 @media (max-width: 1024px) {

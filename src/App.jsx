@@ -61,7 +61,7 @@ function App() {
 
   // Stats for charts
   const [stats, setStats] = useState({
-    guardduty: [],
+    guardduty: { high: 0, medium: 0, low: 0 }, // Changed structure
     cloudtrail: [],
     vpc: []
   });
@@ -105,7 +105,7 @@ function App() {
         ]);
 
         setStats({
-        guardduty: processDistribution(gdData, 'severity'),
+        guardduty: processSeverity(gdData),
         cloudtrail: processDistribution(ctData, 'eventname'),
         vpc: processDistribution(vpcData, 'action')
         });
@@ -119,6 +119,18 @@ function App() {
     if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
     const result = await response.json();
     return result.ResultSet ? parseAthenaResult(result.ResultSet) : (Array.isArray(result) ? result : []);
+  };
+
+  // --- NEW HELPER: Bucket Severity ---
+  const processSeverity = (items) => {
+    let high = 0, medium = 0, low = 0;
+    items.forEach(item => {
+        const sev = parseFloat(item.severity || 0);
+        if (sev > 7) high++;
+        else if (sev >= 4) medium++;
+        else low++;
+    });
+    return { high, medium, low };
   };
 
   const processDistribution = (items, key) => {
@@ -208,27 +220,55 @@ function App() {
   };
 
   const renderSummaryChart = () => {
-    let chartData = [];
-    let title = "";
-    let colorClass = "";
-    let Icon = Icons.Shield;
-
+    // 1. New Design for GuardDuty
     if (activeTab === 'guardduty') {
-        chartData = stats.guardduty;
-        title = "Threat Severity Distribution";
-        colorClass = "gd";
-        Icon = Icons.Shield;
-    } else if (activeTab === 'cloudtrail') {
-        chartData = stats.cloudtrail;
-        title = "Top User Activities";
-        colorClass = "ct";
-        Icon = Icons.Activity;
-    } else {
-        chartData = stats.vpc;
-        title = "Traffic Action Distribution";
-        colorClass = "vpc";
-        Icon = Icons.Network;
+        const { high, medium, low } = stats.guardduty;
+        return (
+            <div className="stat-card" style={{height: '100%', borderLeftWidth: '4px', boxSizing:'border-box', borderLeftColor: 'var(--danger)'}}>
+                <div className="card-header">
+                    <h3>Threat Severity Distribution</h3>
+                </div>
+                
+                {/* Colored Blocks */}
+                <div className="severity-container">
+                    <div className="severity-box high">
+                        <span className="sev-count">{high}</span>
+                        <span className="sev-label">HIGH</span>
+                    </div>
+                    <div className="severity-box medium">
+                        <span className="sev-count">{medium}</span>
+                        <span className="sev-label">MEDIUM</span>
+                    </div>
+                    <div className="severity-box low">
+                        <span className="sev-count">{low}</span>
+                        <span className="sev-label">LOW</span>
+                    </div>
+                </div>
+
+                {/* Legend / Note */}
+                <div className="severity-legend">
+                    <div className="legend-title">Note: Severity level</div>
+                    <div className="legend-items">
+                        <div className="legend-item">
+                            <span className="dot dot-high"></span> High: Above 7
+                        </div>
+                        <div className="legend-item">
+                            <span className="dot dot-med"></span> Medium: 4 → 7
+                        </div>
+                        <div className="legend-item">
+                            <span className="dot dot-low"></span> Low: 1 → 4
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
     }
+
+    // 2. Existing Bar Chart for CloudTrail / VPC
+    let chartData = activeTab === 'cloudtrail' ? stats.cloudtrail : stats.vpc;
+    let title = activeTab === 'cloudtrail' ? "Top User Activities" : "Traffic Action Distribution";
+    let colorClass = activeTab === 'cloudtrail' ? "ct" : "vpc";
+    let Icon = activeTab === 'cloudtrail' ? Icons.Activity : Icons.Network;
 
     return (
         <div className={`stat-card ${colorClass}`} style={{height: '100%', borderLeftWidth: '4px', boxSizing:'border-box'}}>
