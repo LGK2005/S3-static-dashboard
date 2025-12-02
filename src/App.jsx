@@ -81,10 +81,10 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const endpoints = {
-    guardduty: '/logs/guardduty?limit=50',
-    cloudtrail: '/logs/cloudtrail?limit=50',
-    vpc: '/logs/vpc?limit=50',
-    eni: '/logs/eni_logs?limit=50'
+    guardduty: '/logs/guardduty',
+    cloudtrail: '/logs/cloudtrail',
+    vpc: '/logs/vpc',
+    eni: '/logs/eni_logs'
   };
 
   useEffect(() => { fetchOverallStats(); }, []);
@@ -193,7 +193,7 @@ function App() {
                       String(now.getDate()).padStart(2, '0');
     
     if (activeTab === 'guardduty') {
-        const todaysFindings = data.filter(i => (i.created_at || '').startsWith(todayStr)).length;
+        const todaysFindings = data.filter(i => (i.date || '').startsWith(todayStr)).length;
         const highSev = data.filter(i => parseFloat(i.severity) > 7).length;
         return [
             { label: "Total Findings", value: todaysFindings, sub: todayStr },
